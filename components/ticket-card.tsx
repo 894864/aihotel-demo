@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { Clock, MapPin, UserRound } from "lucide-react";
+import { Clock, MapPin, Phone, UserRound } from "lucide-react";
 import { PriorityBadge, StatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -31,13 +31,7 @@ export function TicketCard({
   const canComplete = Boolean(staff) && ticket.assignee_id === staff?.id && ticket.status !== "completed";
 
   return (
-    <Card
-      className={cn(
-        "relative overflow-hidden border p-5 transition",
-        visual.card,
-        compact && "rounded-2xl p-4"
-      )}
-    >
+    <Card className={cn("relative overflow-hidden border p-5 transition", visual.card, compact && "rounded-2xl p-4")}>
       <div className={cn("absolute left-0 top-0 h-full w-2", visual.bar)} />
       <div className="flex items-start justify-between gap-4 pl-3">
         <div>
@@ -53,7 +47,7 @@ export function TicketCard({
       </div>
       <div className="mt-5 grid gap-3 pl-3 text-sm text-slate-600 md:grid-cols-2">
         <Info icon={<MapPin className="h-4 w-4" />} label="部门" value={departmentLabels[ticket.department]} />
-        <Info icon={<UserRound className="h-4 w-4" />} label="负责人" value={ticket.assignee_name ?? "未接单"} />
+        <AssigneeInfo ticket={ticket} />
         <Info icon={<Clock className="h-4 w-4" />} label="等待时间" value={formatDuration(waitMinutes)} />
         <Info icon={<Clock className="h-4 w-4" />} label="完成耗时" value={formatDuration(doneMinutes)} />
       </div>
@@ -77,6 +71,25 @@ export function TicketCard({
         )}
       </div>
     </Card>
+  );
+}
+
+function AssigneeInfo({ ticket }: { ticket: Ticket }) {
+  const value = ticket.assignee_name ?? "未接单";
+  return (
+    <div className="flex items-center gap-2 rounded-2xl bg-slate-900/5 px-3 py-2">
+      <UserRound className="h-4 w-4" />
+      <span className="text-slate-400">负责人</span>
+      {ticket.assignee_phone ? (
+        <a className="ml-auto flex items-center gap-1 text-right font-bold text-blue-700 underline-offset-2 hover:underline" href={`tel:${ticket.assignee_phone}`} title={`拨打 ${ticket.assignee_phone}`}>
+          <Phone className="h-3.5 w-3.5" />
+          <span>{value}</span>
+          <span className="hidden text-xs text-slate-500 xl:inline">{ticket.assignee_phone}</span>
+        </a>
+      ) : (
+        <span className="ml-auto font-bold text-slate-800">{value}</span>
+      )}
+    </div>
   );
 }
 

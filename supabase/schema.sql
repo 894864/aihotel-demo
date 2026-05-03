@@ -13,6 +13,7 @@ create table if not exists public.tickets (
   priority ticket_priority not null default 'normal',
   assignee_id text,
   assignee_name text,
+  assignee_phone text,
   created_at timestamptz not null default now(),
   accepted_at timestamptz,
   completed_at timestamptz,
@@ -23,6 +24,8 @@ create table if not exists public.tickets (
 create index if not exists tickets_created_at_idx on public.tickets (created_at desc);
 create index if not exists tickets_status_idx on public.tickets (status);
 create index if not exists tickets_department_idx on public.tickets (department);
+
+alter table public.tickets add column if not exists assignee_phone text;
 
 alter table public.tickets enable row level security;
 

@@ -25,12 +25,12 @@ export const priorityLabels: Record<Priority, string> = {
 };
 
 export const staffMembers: StaffMember[] = [
-  { id: "hk-lin", name: "林阿姨", department: "housekeeping", role: "楼层服务员" },
-  { id: "hk-chen", name: "陈主管", department: "housekeeping", role: "客房主管" },
-  { id: "eng-wang", name: "王师傅", department: "engineering", role: "工程维修" },
-  { id: "food-zhao", name: "赵领班", department: "food", role: "餐饮领班" },
-  { id: "fd-qin", name: "秦前台", department: "frontdesk", role: "前台接待" },
-  { id: "mgr-he", name: "何经理", department: "manager", role: "值班经理" }
+  { id: "hk-lin", name: "林阿姨", department: "housekeeping", role: "楼层服务员", phone: "13800010001" },
+  { id: "hk-chen", name: "陈主管", department: "housekeeping", role: "客房主管", phone: "13800010002" },
+  { id: "eng-wang", name: "王师傅", department: "engineering", role: "工程维修", phone: "13800020001" },
+  { id: "food-zhao", name: "赵领班", department: "food", role: "餐饮领班", phone: "13800030001" },
+  { id: "fd-qin", name: "秦前台", department: "frontdesk", role: "前台接待", phone: "13800040001" },
+  { id: "mgr-he", name: "何经理", department: "manager", role: "值班经理", phone: "13800050001" }
 ];
 
 export const slaMinutes: Record<Priority, number> = {

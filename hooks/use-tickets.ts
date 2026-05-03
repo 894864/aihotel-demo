@@ -41,11 +41,11 @@ export function useTickets() {
       .from("tickets")
       .select("*")
       .order("created_at", { ascending: false })
-      .then(({ data }) => {
-        if (active) {
-          setTickets(applyTimeouts((data ?? []) as Ticket[]));
-          setLoading(false);
-        }
+      .then(({ data, error }) => {
+        if (!active) return;
+        if (error) setMessage(`加载工单失败：${error.message}`);
+        setTickets(applyTimeouts((data ?? []) as Ticket[]));
+        setLoading(false);
       });
 
     const channel = client
@@ -86,6 +86,7 @@ export function useTickets() {
         priority: input.priority,
         assignee_id: null,
         assignee_name: null,
+        assignee_phone: null,
         created_at: now.toISOString(),
         accepted_at: null,
         completed_at: null,
@@ -113,6 +114,7 @@ export function useTickets() {
         patch.accepted_at = now;
         patch.assignee_id = staff?.id ?? null;
         patch.assignee_name = staff?.name ?? null;
+        patch.assignee_phone = staff?.phone ?? null;
       }
       if (status === "completed") {
         patch.completed_at = now;

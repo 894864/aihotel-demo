@@ -11,6 +11,7 @@ export type StaffMember = {
   name: string;
   department: Department;
   role: string;
+  phone: string;
 };
 
 export type Ticket = {
@@ -23,6 +24,7 @@ export type Ticket = {
   priority: Priority;
   assignee_id: string | null;
   assignee_name: string | null;
+  assignee_phone: string | null;
   created_at: string;
   accepted_at: string | null;
   completed_at: string | null;
