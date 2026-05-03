@@ -6,6 +6,8 @@ import { Clock, MapPin, Phone, UserRound } from "lucide-react";
 import { PriorityBadge, StatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { useCallCapable } from "@/hooks/use-call-capable";
+import { getAssigneePhone } from "@/lib/assignee";
 import { departmentLabels } from "@/lib/constants";
 import { formatDuration, isTicketOverdue, minutesBetween, minutesSince } from "@/lib/time";
 import { cn } from "@/lib/utils";
@@ -24,6 +26,7 @@ export function TicketCard({
   onComplete?: (ticket: Ticket) => void;
   compact?: boolean;
 }) {
+  const canCall = useCallCapable();
   const overdue = isTicketOverdue(ticket.due_at, ticket.status) || ticket.status === "timeout";
   const visual = getTicketVisual(ticket, overdue);
   const waitMinutes = minutesBetween(ticket.created_at, ticket.accepted_at) ?? minutesSince(ticket.created_at);
@@ -49,7 +52,7 @@ export function TicketCard({
 
       <div className="mt-5 grid gap-3 pl-3 text-sm text-slate-600 md:grid-cols-2">
         <Info icon={<MapPin className="h-4 w-4" />} label="部门" value={departmentLabels[ticket.department]} />
-        <AssigneeInfo ticket={ticket} />
+        <AssigneeInfo ticket={ticket} canCall={canCall} />
         <Info icon={<Clock className="h-4 w-4" />} label="等待时间" value={formatDuration(waitMinutes)} />
         <Info icon={<Clock className="h-4 w-4" />} label="完成耗时" value={formatDuration(doneMinutes)} />
       </div>
@@ -77,28 +80,30 @@ export function TicketCard({
   );
 }
 
-function AssigneeInfo({ ticket }: { ticket: Ticket }) {
+function AssigneeInfo({ ticket, canCall }: { ticket: Ticket; canCall: boolean }) {
   const value = ticket.assignee_name ?? "未接单";
+  const phone = getAssigneePhone(ticket);
 
   return (
     <div className="flex items-center gap-2 rounded-2xl bg-slate-900/5 px-3 py-2">
       <UserRound className="h-4 w-4" />
       <span className="text-slate-400">负责人</span>
-      {ticket.assignee_phone ? (
-        <>
+      {ticket.assignee_name && phone ? (
+        canCall ? (
           <a
-            className="ml-auto flex items-center gap-1 text-right font-bold text-blue-700 underline-offset-2 hover:underline md:hidden"
-            href={`tel:${ticket.assignee_phone}`}
-            title={`拨打 ${ticket.assignee_phone}`}
+            className="ml-auto flex items-center gap-1 text-right font-bold text-blue-700 underline-offset-2 hover:underline"
+            href={`tel:${phone}`}
+            title={`拨打 ${phone}`}
           >
             <Phone className="h-3.5 w-3.5" />
             <span>{value}</span>
           </a>
-          <span className="ml-auto hidden text-right font-bold text-slate-800 md:block">
+        ) : (
+          <span className="ml-auto text-right font-bold text-slate-800">
             {value}
-            <span className="ml-2 text-xs font-semibold text-slate-500">{ticket.assignee_phone}</span>
+            <span className="ml-2 text-xs font-semibold text-slate-500">{phone}</span>
           </span>
-        </>
+        )
       ) : (
         <span className="ml-auto font-bold text-slate-800">{value}</span>
       )}

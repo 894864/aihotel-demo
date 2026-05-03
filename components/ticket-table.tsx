@@ -6,6 +6,8 @@ import { Phone } from "lucide-react";
 import { StatusBadge } from "@/components/status-badge";
 import { Select } from "@/components/ui/select";
 import { Table, Td, Th } from "@/components/ui/table";
+import { useCallCapable } from "@/hooks/use-call-capable";
+import { getAssigneePhone } from "@/lib/assignee";
 import { departmentLabels } from "@/lib/constants";
 import { formatDuration, isTicketOverdue, minutesBetween, minutesSince } from "@/lib/time";
 import type { Ticket, TicketStatus } from "@/lib/types";
@@ -23,6 +25,7 @@ const filterLabels: Record<TableFilter, string> = {
 
 export function TicketTable({ tickets }: { tickets: Ticket[] }) {
   const [filter, setFilter] = useState<TableFilter>("all");
+  const canCall = useCallCapable();
 
   const visibleTickets = useMemo(() => {
     return tickets.filter((ticket) => {
@@ -55,32 +58,43 @@ export function TicketTable({ tickets }: { tickets: Ticket[] }) {
       </div>
 
       <div className="overflow-x-auto">
-        <Table className="min-w-[860px]">
+        <Table className="w-[820px] min-w-[820px] table-fixed">
+          <colgroup>
+            <col className="w-[70px]" />
+            <col className="w-[92px]" />
+            <col className="w-[132px]" />
+            <col className="w-[232px]" />
+            <col className="w-[92px]" />
+            <col className="w-[92px]" />
+            <col className="w-[110px]" />
+          </colgroup>
           <thead className="bg-slate-950/5">
             <tr>
-              <Th className="w-20 px-2">房号</Th>
-              <Th className="w-24 px-2">状态</Th>
-              <Th className="w-32 px-2">负责人</Th>
-              <Th className="min-w-[210px] px-2">需求</Th>
-              <Th className="w-24 px-2">部门</Th>
-              <Th className="w-24 px-2">等待</Th>
-              <Th className="w-28 px-2">完成耗时</Th>
+              <Th className="px-2 py-3">房号</Th>
+              <Th className="px-2 py-3">状态</Th>
+              <Th className="px-2 py-3">负责人</Th>
+              <Th className="px-2 py-3">需求</Th>
+              <Th className="px-2 py-3">部门</Th>
+              <Th className="px-2 py-3">等待</Th>
+              <Th className="px-2 py-3">完成耗时</Th>
             </tr>
           </thead>
           <tbody>
             {visibleTickets.map((ticket) => (
               <tr key={ticket.id}>
-                <Td className="px-2 text-lg font-black">{ticket.room}</Td>
-                <Td className="px-2">
+                <Td className="px-2 py-3 text-lg font-black">{ticket.room}</Td>
+                <Td className="px-2 py-3">
                   <StatusBadge status={getDisplayStatus(ticket)} />
                 </Td>
-                <Td className="px-2">
-                  <AssigneeCell ticket={ticket} />
+                <Td className="px-2 py-3">
+                  <AssigneeCell ticket={ticket} canCall={canCall} />
                 </Td>
-                <Td className="min-w-[210px] px-2 font-medium text-slate-900">{ticket.request}</Td>
-                <Td className="px-2">{departmentLabels[ticket.department]}</Td>
-                <Td className="px-2">{formatDuration(minutesBetween(ticket.created_at, ticket.accepted_at) ?? minutesSince(ticket.created_at))}</Td>
-                <Td className="px-2">{formatDuration(minutesBetween(ticket.accepted_at ?? ticket.created_at, ticket.completed_at))}</Td>
+                <Td className="px-2 py-3 font-medium leading-5 text-slate-900">{ticket.request}</Td>
+                <Td className="px-2 py-3">{departmentLabels[ticket.department]}</Td>
+                <Td className="px-2 py-3">
+                  {formatDuration(minutesBetween(ticket.created_at, ticket.accepted_at) ?? minutesSince(ticket.created_at))}
+                </Td>
+                <Td className="px-2 py-3">{formatDuration(minutesBetween(ticket.accepted_at ?? ticket.created_at, ticket.completed_at))}</Td>
               </tr>
             ))}
             {!visibleTickets.length && (
@@ -109,29 +123,33 @@ function isAcceptedTicket(ticket: Ticket) {
   return ticket.status === "accepted" || ticket.status === "processing" || Boolean(ticket.assignee_id || ticket.assignee_name);
 }
 
-function AssigneeCell({ ticket }: { ticket: Ticket }) {
+function AssigneeCell({ ticket, canCall }: { ticket: Ticket; canCall: boolean }) {
   if (!ticket.assignee_name) {
     return <span className="text-slate-400">未接单</span>;
   }
 
-  if (!ticket.assignee_phone) {
+  const phone = getAssigneePhone(ticket);
+  if (!phone) {
     return <span className="font-bold text-slate-700">{ticket.assignee_name}</span>;
   }
 
-  return (
-    <>
+  if (canCall) {
+    return (
       <a
-        className="inline-flex items-center gap-1 font-bold text-blue-700 hover:underline md:hidden"
-        href={`tel:${ticket.assignee_phone}`}
-        title={`拨打 ${ticket.assignee_phone}`}
+        className="inline-flex items-center gap-1 font-bold text-blue-700 underline-offset-2 hover:underline"
+        href={`tel:${phone}`}
+        title={`拨打 ${phone}`}
       >
         <Phone className="h-4 w-4" />
         <span>{ticket.assignee_name}</span>
       </a>
-      <span className="hidden font-bold text-slate-700 md:block">
-        {ticket.assignee_name}
-        <span className="mt-0.5 block text-xs font-semibold text-slate-500">{ticket.assignee_phone}</span>
-      </span>
-    </>
+    );
+  }
+
+  return (
+    <span className="block font-bold text-slate-700">
+      {ticket.assignee_name}
+      <span className="mt-0.5 block text-xs font-semibold text-slate-500">{phone}</span>
+    </span>
   );
 }
