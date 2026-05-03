@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-display: "Georgia", "Songti SC", "SimSun";
+  --font-sans: "Aptos", "Microsoft YaHei", "PingFang SC";
+  --background: 42 38% 95%;
+  --foreground: 218 28% 13%;
+  --card: 0 0% 100%;
+  --card-foreground: 218 28% 13%;
+  --primary: 205 84% 22%;
+  --primary-foreground: 44 68% 96%;
+  --secondary: 38 42% 88%;
+  --secondary-foreground: 218 28% 13%;
+  --muted: 38 28% 90%;
+  --muted-foreground: 218 11% 42%;
+  --accent: 32 75% 55%;
+  --accent-foreground: 218 28% 13%;
+  --destructive: 0 76% 52%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 36 24% 82%;
+  --input: 36 24% 82%;
+  --ring: 205 84% 22%;
+  --radius: 1rem;
+}
+
+* {
+  border-color: hsl(var(--border));
+}
+
+body {
+  min-height: 100vh;
+  overflow-y: scroll;
+  background:
+    radial-gradient(circle at top left, rgba(232, 172, 75, 0.26), transparent 34rem),
+    linear-gradient(135deg, #f8f3e8 0%, #edf0ee 45%, #e8dac6 100%);
+  color: hsl(var(--foreground));
+}
+
+.hotel-grid {
+  background-image:
+    linear-gradient(rgba(19, 43, 66, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(19, 43, 66, 0.05) 1px, transparent 1px);
+  background-size: 34px 34px;
+}
+
+.glass-panel {
+  background: rgba(255, 252, 245, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.68);
+  box-shadow: 0 24px 80px rgba(15, 23, 42, 0.12);
+  backdrop-filter: blur(18px);
+}
