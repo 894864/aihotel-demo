@@ -58,12 +58,12 @@ export default function FrontdeskPage() {
 
   return (
     <AppShell title="前台实时客需看板" eyebrow={mode === "supabase" ? "Supabase Realtime 在线" : "本地 Demo 实时模式"}>
-      <section className="mb-5 grid gap-4 md:grid-cols-5">
+      <section className="mb-5 grid grid-cols-3 gap-3 md:grid-cols-5 md:gap-4">
         <FilterStat active={filter === "unfinished"} label="未完成" value={stats.unfinished} onClick={() => selectFilter("unfinished")} tone="slate" />
+        <FilterStat active={filter === "timeout"} label="已超时" value={stats.timeout} onClick={() => selectFilter("timeout")} tone="red" />
         <FilterStat active={filter === "unaccepted"} label="未接单" value={stats.unaccepted} onClick={() => selectFilter("unaccepted")} tone="amber" />
         <FilterStat active={filter === "accepted"} label="已接单" value={stats.accepted} onClick={() => selectFilter("accepted")} tone="blue" />
         <FilterStat active={filter === "completed"} label="已完成" value={stats.completed} onClick={() => selectFilter("completed")} tone="gray" />
-        <FilterStat active={filter === "timeout"} label="已超时" value={stats.timeout} onClick={() => selectFilter("timeout")} tone="red" />
       </section>
 
       <section className="mb-5 rounded-3xl bg-white/75 p-4 shadow-panel">
@@ -122,14 +122,14 @@ function FilterStat({
       type="button"
       onClick={onClick}
       className={cn(
-        "rounded-3xl border bg-white/90 p-5 text-left shadow-panel transition hover:-translate-y-0.5 hover:bg-white",
+        "rounded-2xl border bg-white/90 p-3 text-left shadow-panel transition hover:-translate-y-0.5 hover:bg-white md:rounded-3xl md:p-5",
         active ? "border-slate-950 ring-2 ring-slate-950/10" : "border-white/70"
       )}
     >
-      <p className="text-sm font-bold text-slate-500">{label}</p>
+      <p className="text-xs font-bold text-slate-500 md:text-sm">{label}</p>
       <p
         className={cn(
-          "mt-3 text-4xl font-black",
+          "mt-2 text-3xl font-black md:mt-3 md:text-4xl",
           tone === "red" && "text-red-600",
           tone === "amber" && "text-amber-600",
           tone === "blue" && "text-blue-700",
