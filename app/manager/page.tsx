@@ -25,7 +25,7 @@ export default function ManagerPage() {
 
   return (
     <AppShell title="主管运营看板" eyebrow={mode === "supabase" ? "今日实时数据" : "本地 Demo 数据"}>
-      <section className="mb-5 grid gap-4 md:grid-cols-4 xl:grid-cols-7">
+      <section className="mb-5 grid grid-cols-3 gap-3 md:grid-cols-4 md:gap-4 xl:grid-cols-7">
         <KpiCard label="今日总单" value={tickets.length} />
         <KpiCard label="待接单" value={pending} tone={pending ? "danger" : "light"} />
         <KpiCard label="处理中" value={processing} />
