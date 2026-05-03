@@ -55,32 +55,32 @@ export function TicketTable({ tickets }: { tickets: Ticket[] }) {
       </div>
 
       <div className="overflow-x-auto">
-        <Table className="min-w-[980px]">
+        <Table className="min-w-[860px]">
           <thead className="bg-slate-950/5">
             <tr>
-              <Th className="w-24">房号</Th>
-              <Th className="w-28">状态</Th>
-              <Th className="w-44">负责人</Th>
-              <Th className="min-w-[240px]">需求</Th>
-              <Th className="w-28">部门</Th>
-              <Th className="w-28">等待</Th>
-              <Th className="w-32">完成耗时</Th>
+              <Th className="w-20 px-2">房号</Th>
+              <Th className="w-24 px-2">状态</Th>
+              <Th className="w-32 px-2">负责人</Th>
+              <Th className="min-w-[210px] px-2">需求</Th>
+              <Th className="w-24 px-2">部门</Th>
+              <Th className="w-24 px-2">等待</Th>
+              <Th className="w-28 px-2">完成耗时</Th>
             </tr>
           </thead>
           <tbody>
             {visibleTickets.map((ticket) => (
               <tr key={ticket.id}>
-                <Td className="text-lg font-black">{ticket.room}</Td>
-                <Td>
+                <Td className="px-2 text-lg font-black">{ticket.room}</Td>
+                <Td className="px-2">
                   <StatusBadge status={getDisplayStatus(ticket)} />
                 </Td>
-                <Td>
+                <Td className="px-2">
                   <AssigneeCell ticket={ticket} />
                 </Td>
-                <Td className="min-w-[240px] font-medium text-slate-900">{ticket.request}</Td>
-                <Td>{departmentLabels[ticket.department]}</Td>
-                <Td>{formatDuration(minutesBetween(ticket.created_at, ticket.accepted_at) ?? minutesSince(ticket.created_at))}</Td>
-                <Td>{formatDuration(minutesBetween(ticket.accepted_at ?? ticket.created_at, ticket.completed_at))}</Td>
+                <Td className="min-w-[210px] px-2 font-medium text-slate-900">{ticket.request}</Td>
+                <Td className="px-2">{departmentLabels[ticket.department]}</Td>
+                <Td className="px-2">{formatDuration(minutesBetween(ticket.created_at, ticket.accepted_at) ?? minutesSince(ticket.created_at))}</Td>
+                <Td className="px-2">{formatDuration(minutesBetween(ticket.accepted_at ?? ticket.created_at, ticket.completed_at))}</Td>
               </tr>
             ))}
             {!visibleTickets.length && (
@@ -119,14 +119,19 @@ function AssigneeCell({ ticket }: { ticket: Ticket }) {
   }
 
   return (
-    <a
-      className="inline-flex items-center gap-1.5 font-bold text-blue-700 hover:underline"
-      href={`tel:${ticket.assignee_phone}`}
-      title={`拨打 ${ticket.assignee_phone}`}
-    >
-      <Phone className="h-4 w-4" />
-      <span>{ticket.assignee_name}</span>
-      <span className="text-xs font-semibold text-slate-500">{ticket.assignee_phone}</span>
-    </a>
+    <>
+      <a
+        className="inline-flex items-center gap-1 font-bold text-blue-700 hover:underline md:hidden"
+        href={`tel:${ticket.assignee_phone}`}
+        title={`拨打 ${ticket.assignee_phone}`}
+      >
+        <Phone className="h-4 w-4" />
+        <span>{ticket.assignee_name}</span>
+      </a>
+      <span className="hidden font-bold text-slate-700 md:block">
+        {ticket.assignee_name}
+        <span className="mt-0.5 block text-xs font-semibold text-slate-500">{ticket.assignee_phone}</span>
+      </span>
+    </>
   );
 }

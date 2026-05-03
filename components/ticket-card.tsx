@@ -2,6 +2,7 @@
 
 import type React from "react";
 import { Clock, MapPin, Phone, UserRound } from "lucide-react";
+
 import { PriorityBadge, StatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -45,12 +46,14 @@ export function TicketCard({
           </p>
         </div>
       </div>
+
       <div className="mt-5 grid gap-3 pl-3 text-sm text-slate-600 md:grid-cols-2">
         <Info icon={<MapPin className="h-4 w-4" />} label="部门" value={departmentLabels[ticket.department]} />
         <AssigneeInfo ticket={ticket} />
         <Info icon={<Clock className="h-4 w-4" />} label="等待时间" value={formatDuration(waitMinutes)} />
         <Info icon={<Clock className="h-4 w-4" />} label="完成耗时" value={formatDuration(doneMinutes)} />
       </div>
+
       <div className="mt-4 flex flex-wrap items-center justify-between gap-3 pl-3">
         <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">
           {ticket.source === "ai_call" ? "AI 来电" : "人工录入"}
@@ -76,16 +79,26 @@ export function TicketCard({
 
 function AssigneeInfo({ ticket }: { ticket: Ticket }) {
   const value = ticket.assignee_name ?? "未接单";
+
   return (
     <div className="flex items-center gap-2 rounded-2xl bg-slate-900/5 px-3 py-2">
       <UserRound className="h-4 w-4" />
       <span className="text-slate-400">负责人</span>
       {ticket.assignee_phone ? (
-        <a className="ml-auto flex items-center gap-1 text-right font-bold text-blue-700 underline-offset-2 hover:underline" href={`tel:${ticket.assignee_phone}`} title={`拨打 ${ticket.assignee_phone}`}>
-          <Phone className="h-3.5 w-3.5" />
-          <span>{value}</span>
-          <span className="hidden text-xs text-slate-500 xl:inline">{ticket.assignee_phone}</span>
-        </a>
+        <>
+          <a
+            className="ml-auto flex items-center gap-1 text-right font-bold text-blue-700 underline-offset-2 hover:underline md:hidden"
+            href={`tel:${ticket.assignee_phone}`}
+            title={`拨打 ${ticket.assignee_phone}`}
+          >
+            <Phone className="h-3.5 w-3.5" />
+            <span>{value}</span>
+          </a>
+          <span className="ml-auto hidden text-right font-bold text-slate-800 md:block">
+            {value}
+            <span className="ml-2 text-xs font-semibold text-slate-500">{ticket.assignee_phone}</span>
+          </span>
+        </>
       ) : (
         <span className="ml-auto font-bold text-slate-800">{value}</span>
       )}
